@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import React from 'react';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -15,6 +15,7 @@ import Profile from '../screens/Profile'
 
 
 export default function Tabs() {
+  
 
   return (
     <Tab.Navigator
@@ -24,14 +25,10 @@ export default function Tabs() {
       inactiveColor="#3e2465"
       barStyle={{
         backgroundColor: '#ffffff',
-        borderRadius: 20,
         overflow: 'hidden',
         height: 80,
-        left: 10,
-        right: 10,
+        borderRadius: 20,
         position: 'absolute',
-        bottom: 10,
-
         shadowColor: '#7F5DF0',
         shadowOffset: {
           width: 0,
@@ -85,8 +82,8 @@ export default function Tabs() {
           </View>
         )
       }} name="Home" component={Home} />
-      <Tab.Screen options={{
 
+      <Tab.Screen options={{
         tabBarIcon: ({ focused }) => (
           <View style={{ alignItems: 'center', justifyContent: 'center', }}>
             <Image

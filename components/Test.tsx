@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, ImageBackground, ScrollView, Image } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, ImageBackground, ScrollView, Image, SafeAreaView, useWindowDimensions, Dimensions } from 'react-native';
 import { ImageComponent } from 'react-native/Libraries/Image/Image';
 
 interface Card {
@@ -37,115 +37,119 @@ export default function test() {
         }
 
     };
+    // const {height,width} = Dimensions.get('screen')
+    const {height,width} = useWindowDimensions();
+    
     return (
 
-        <ScrollView><View style={styles.centeredView}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                    setModalVisible(!modalVisible);
-                }}>
-                <View style={styles.container}>
-                    <View style={styles.card}>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Card Number</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={cardNumber}
-                                keyboardType="numeric"
-                                maxLength={16}
-                                textContentType='creditCardNumber'
-                                onChangeText={setCardNumber}
-                            />
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Cardholder Name</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={cardName}
-                                onChangeText={setCardName}
-                                placeholder="John Doe"
-                            />
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Expiry Date</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={expiryDate}
-                                keyboardType="numeric"
-                                maxLength={4}
-                                placeholder="MM/YY"
-                                onChangeText={setExpiryDate}
-                            />
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>CVV</Text>
-                            <TextInput style={styles.input}
-                                keyboardType='numeric'
-                                value={cvv}
-                                maxLength={3}
-                                placeholder="123"
-                                onChangeText={setCvv} />
-                        </View>
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => {
+        <ScrollView>
+            <SafeAreaView style={styles.centeredView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.container}>
+                        <View style={styles.card}>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Card Number</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={cardNumber}
+                                    keyboardType="numeric"
+                                    maxLength={16}
+                                    textContentType='creditCardNumber'
+                                    onChangeText={setCardNumber}
+                                />
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Cardholder Name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={cardName}
+                                    onChangeText={setCardName}
+                                    placeholder="John Doe"
+                                />
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Expiry Date</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={expiryDate}
+                                    keyboardType="numeric"
+                                    maxLength={4}
+                                    placeholder="MM/YY"
+                                    onChangeText={setExpiryDate}
+                                />
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>CVV</Text>
+                                <TextInput style={styles.input}
+                                    keyboardType='numeric'
+                                    value={cvv}
+                                    maxLength={3}
+                                    placeholder="123"
+                                    onChangeText={setCvv} />
+                            </View>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => {
 
-                                handleSubmit()
-                            }}>
-                            <Text style={styles.textStyle}>Hide Modal</Text>
-                        </Pressable>
+                                    handleSubmit()
+                                }}>
+                                <Text style={styles.textStyle}>submit</Text>
+                            </Pressable>
+                        </View>
                     </View>
+                </Modal>
+                <View>
+
                 </View>
-            </Modal>
-            <View>
+                <View>
+                    {cards.map((card, index) => (
+                        <View key={index} style={{ backgroundColor: 'black', width: width *0.95, borderRadius: 15,height:height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
+                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
+                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-10 mx-auto">{card.cardNumber}</Text>
+                                    <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>{card.cardName}</Text>
+                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='top-10'>{card.expiryDate}</Text>
+                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{card.cvv}</Text>
+                                </View>
+                            </ImageBackground>
+                        </View>
+                    ))}
 
-            </View>
-            <View>
-                {cards.map((card, index) => (
-                    <View key={index} style={{ height: 230, backgroundColor: 'black', width: 400, borderRadius: 15, overflow: 'hidden' }}>
-                        <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-10 mx-auto">{card.cardNumber}</Text>
-                                <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>{card.cardName}</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='top-10'>{card.expiryDate}</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{card.cvv}</Text>
-                            </View>
-                        </ImageBackground>
-                    </View>
-                ))}
+                    <Pressable
 
-                <Pressable
+                        className="mx-auto bg- "
+                        onPress={() => setModalVisible(true)}>
 
-                    className="mx-auto bg- "
-                    onPress={() => setModalVisible(true)}>
+                        <View style={{ height: height *0.27, width: width * 0.96, backgroundColor: 'black', borderRadius: 15, overflow: 'hidden', margin: 4 }} className="m-4">
+                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
+                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className=" mx-auto">Add card</Text>
+                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-4 mx-auto">---- ---- ---- ----</Text>
+                                    <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>----------  ----</Text>
+                                    <Image source={require('../assets/addCard.png')} className="mx-auto w-24 h-24"></Image>
+                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='bottom-1'>--/--</Text>
+                                    
+                                </View>
+                            </ImageBackground>
+                        </View>
 
-                    <View style={{ height: 230, backgroundColor: 'black', width: 400, borderRadius: 15, overflow: 'hidden' }} className="m-4">
-                        <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className=" mx-auto">Add card</Text>
-                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-4 mx-auto">---- ---- ---- ----</Text>
-                                <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>----------  ----</Text>
-                                <Image source={require('../assets/addCard.png')} className="mx-auto w-24 h-24"></Image>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='bottom-1'>--/--</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-72 bottom-8'>---</Text>
-                            </View>
-                        </ImageBackground>
-                    </View>
-                    <Text style={styles.textStyle}>Add card</Text>
 
-                </Pressable>
+                    </Pressable>
 
 
 
 
-            </View>
+                </View>
 
 
-        </View>
+            </SafeAreaView>
         </ScrollView>
     );
 };
@@ -156,6 +160,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 22,
+
     },
     modalView: {
         margin: 20,

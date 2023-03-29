@@ -33,10 +33,11 @@ const Register = () => {
     return (
 
 
-        <LinearGradient colors={['#2F3136', '#1A202C', '#0E1014', '#2A2D34', '#3B4048', '#4F5563']} style={styles.container}>
+        <LinearGradient colors={['#0f0c29', '#302b63', '#24243e']} style={styles.container}>
             <Text style={styles.title}>Register</Text>
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Full Name"
                 autoCapitalize="none"
                 value={fullName}
@@ -44,6 +45,7 @@ const Register = () => {
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Email"
                 autoCapitalize="none"
                 value={email}
@@ -51,6 +53,7 @@ const Register = () => {
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Password"
                 secureTextEntry={true}
                 autoCapitalize="none"
@@ -59,6 +62,7 @@ const Register = () => {
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Contact Details"
                 keyboardType='numeric'
                 autoCapitalize="none"

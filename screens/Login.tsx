@@ -22,11 +22,12 @@ const Login = () => {
     };
 
     return (
-        <LinearGradient colors={['#2F3136', '#1A202C', '#0E1014', '#2A2D34', '#3B4048', '#4F5563']} style={styles.container}>
+        <LinearGradient colors={['#0f0c29', '#302b63', '#24243e']} style={styles.container}>
         
             <Text style={styles.title}>Login</Text>
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Email"
                 keyboardType="email-address"
                 value={email}
@@ -34,6 +35,7 @@ const Login = () => {
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor='black'
                 placeholder="Password"
                 secureTextEntry
                 value={password}
