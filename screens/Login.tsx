@@ -1,29 +1,49 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authContext } from "../components/authContext";
+import Register from './Register'
+import Tabs from '../navigation/Tabs'
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { setDecodedToken } = useContext(authContext);
+    const navigation = useNavigation();
 
-    const handleLogin = () => {
-        const data = {
-            email,
-            password,
-        };
-        if (!email || !password) {
-            Alert.alert("Please fill in all the fields")
 
+    async function handleLogin(event) {
+        event.preventDefault();
+        const response = await fetch("http://192.168.1.9:1337/api/auth/login", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
+
+        const data = await response.json();
+        console.log(data);
+        if (data.status === "ok") {
+            await AsyncStorage.setItem("token", data.token);
+            setDecodedToken(data.token);
+
+            Alert.alert("Login successfull");
+            navigation.navigate("Tabs");
+        } else {
+            Alert.alert("please recheck your username and password or signup first");
         }
-        else {
-            const mydata = JSON.stringify(data)
-            Alert.alert(mydata, "login successful")
-        }
-    };
+    }
 
     return (
         <LinearGradient colors={['#0f0c29', '#302b63', '#24243e']} style={styles.container}>
-        
+
             <Text style={styles.title}>Login</Text>
             <TextInput
                 style={styles.input}
@@ -43,6 +63,15 @@ const Login = () => {
             />
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <Text style={{ width: 200 }}>
+                Haven't created an account yet?
+            </Text>
+            <TouchableOpacity style={{ width: 100, height: 40, backgroundColor: '#FFA500', borderRadius: 10, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
+                navigation.navigate('Register')
+
+            }}>
+                <Text style={{ textAlign: 'center', width: 60, color: '#000' }}>Register</Text>
             </TouchableOpacity>
         </LinearGradient>
     );

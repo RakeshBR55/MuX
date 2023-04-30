@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import AddCard from '../components/AddCard'
 import Test from '../components/Test'
 import LinearGradient from 'react-native-linear-gradient';
+import CreditCardInputModal from '../components/CreditCardInputModal';
+import CreditCard from '../components/CreditCard';
 
 
 export default function Home() {
@@ -11,13 +13,12 @@ export default function Home() {
 
 
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#eeaeca', '#090f79', ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }} style={styles.gradient}>
-
-        <Text style={{ color: 'black', }}>Home screen</Text>
+      <LinearGradient colors={['#0cb4ee', '#03030a','#0707b8' ]}
+         style={styles.gradient}>
         {/* <AddCard /> */}
-        <Test />
+        {/* <Test /> */}
+        <CreditCard />
+        {/* <CreditCardInputModal /> */}
 
       </LinearGradient>
     </SafeAreaView>

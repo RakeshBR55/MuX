@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Transaction {
   name: string;
@@ -29,7 +30,7 @@ const transactions: Transaction[] = [
   },
 ];
 
-export default function TransactionHistory() {
+export default function History() {
   const renderItem = ({ item }: { item: Transaction }) => (
     <View style={styles.transaction}>
       <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
@@ -44,19 +45,30 @@ export default function TransactionHistory() {
   );
 
   return (
-    <FlatList
+    <LinearGradient colors={['#0cb4ee', '#03030a','#0707b8' ]}  style={{backgroundColor:'#383838', flex:1, }}>
+
+      <Text className='text-3xl font-bold p-10 bg-black ' style={{backgroundColor:'#383838', textAlign:'center', }}>
+        Transaction History
+      </Text>
+       <FlatList
       data={transactions}
       keyExtractor={(item, index) => index.toString()}
       renderItem={renderItem}
-      contentContainerStyle={styles.container}
-    />
+      contentContainerStyle={styles.container}/>
+      
+      
+
+    </LinearGradient>
+   
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 2,
-    backgroundColor: '#fff',
+    backgroundColor: '#383838',
+    
+    
   },
   transaction: {
     flexDirection: 'row',
@@ -64,13 +76,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 25,    
     backgroundColor: '#000',
-    height:80
+    height:80,
+    borderColor:'white',
+    borderWidth:1,
+    
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 10,
+    marginLeft:10
   },
   details: {
     flex: 1,

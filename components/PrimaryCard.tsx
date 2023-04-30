@@ -1,60 +1,42 @@
-import React, { useState } from 'react';
-import { Switch, Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, ImageBackground, ScrollView, Image, SafeAreaView, useWindowDimensions, Dimensions, } from 'react-native';
-import { ImageComponent } from 'react-native/Libraries/Image/Image';
-import WelcomeScreen from './WelcomeScreen';
+import { StyleSheet, Alert, TextInput, Image, Pressable, Text, View, useWindowDimensions, ImageBackground, Switch, Modal, SafeAreaView } from 'react-native'
+import React, { useState } from 'react'
+import { ScrollView } from 'react-native-gesture-handler';
 
-
-interface Card {
-    cardNumber: string;
-    cardName: string;
-    expiryDate: string;
-    cvv: string;
-}
-
-
-export default function test() {
+export default function PrimaryCard() {
     const [modalVisible, setModalVisible] = useState(false);
-    const [cards, setCards] = useState<Card[]>([]);
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [cvv, setCvv] = useState('');
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
-
-
 
     const handleSubmit = () => {
         if (!cardNumber || !expiryDate || !cardName || !cvv) {
             Alert.alert('Please fill all fields');
         } else {
-            Alert.alert('Card added successfully');
             setModalVisible(!modalVisible)
-            const newCard: Card = { cardNumber, cardName, expiryDate, cvv, };;
-            setCards([...cards, newCard]);
-            console.log(cards)
+            const cards = {
+                cardNumber: cardNumber,
+                cardHolder: cardName,
+                expiryDate: expiryDate,
+                status: "primary"
+            };
+
             
+            Alert.alert('Card added successfully');
+            console.log(cards)
             setCardName('');
             setCardNumber('');
             setExpiryDate('');
             setCvv('');
-
         }
-
     };
-    const handleClose = () =>
-        setModalVisible(!modalVisible);
 
-    // const {height,width} = Dimensions.get('screen')
+
     const { height, width } = useWindowDimensions();
 
     return (
-
-
         <ScrollView>
-            <SafeAreaView style={styles.centeredView}>
-                <WelcomeScreen />
+            <SafeAreaView>
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -110,8 +92,7 @@ export default function test() {
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
                                     onPress={() => {
-
-                                        handleClose()
+                                        setModalVisible(!modalVisible);
                                     }}>
                                     <Text style={styles.textStyle}>Close</Text>
                                 </Pressable>
@@ -127,66 +108,38 @@ export default function test() {
                         </View>
                     </View>
                 </Modal>
-                <View>
-
-                </View>
-                <View>
-                    {cards.map((card, index) => (
-                        <View key={index} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
-                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-10 mx-auto">{card.cardNumber}</Text>
-                                    <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>{card.cardName}</Text>
-                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='top-10'>{card.expiryDate}</Text>
-                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{card.cvv}</Text>
-                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{index}</Text>
-                                    <View style={styles.row}>
-                                        <Text style={styles.label}>Card type</Text>
-                                        <Switch
-                                            trackColor={{ false: '#767577', true: '#81b0ff' }}
-                                            thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-                                            ios_backgroundColor="#3e3e3e"
-                                            onValueChange={toggleSwitch}
-                                            value={isEnabled}
-                                        />
-                                    </View>
-                                </View>
-                            </ImageBackground>
-                        </View>
-                    ))}
-
-                    <Pressable
-
-                        className="mx-auto bg- "
-                        onPress={() => setModalVisible(true)}>
-
-                        <View style={{ height: height * 0.27, width: width * 0.96, backgroundColor: 'black', borderRadius: 15, overflow: 'hidden', margin: 4, marginBottom: 100 }} className="m-4">
-                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className=" mx-auto">Add card</Text>
-                                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-4 mx-auto">---- ---- ---- ----</Text>
-                                    <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>----------  ----</Text>
-                                    <Image source={require('../assets/addCard.png')} className="mx-auto w-24 h-24"></Image>
-                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='bottom-1'>--/--</Text>
-                                </View>
-                            </ImageBackground>
-                        </View>
-                    </Pressable>
-                </View>
 
 
-            </SafeAreaView>
+                <Pressable
+
+                    className="mx-auto bg- "
+                    onPress={() => setModalVisible(true)}>
+
+                    <View style={{ height: height * 0.27, width: width * 0.96, backgroundColor: 'black', borderRadius: 15, overflow: 'hidden', margin: 4, marginBottom: 100 }} className="m-4">
+                        <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
+                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className=" mx-auto">Add Primary card</Text>
+                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-4 mx-auto">---- ---- ---- ----</Text>
+                                <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>----------  ----</Text>
+                                <Image source={require('../assets/addCard.png')} className="mx-auto w-24 h-24"></Image>
+                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='bottom-1'>--/--</Text>
+
+                            </View>
+                        </ImageBackground>
+                    </View>
+                </Pressable>
+
+
+            </SafeAreaView >
         </ScrollView>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-
-
     },
     modalView: {
         flex: 1,
@@ -205,18 +158,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     button: {
-
-
         width: 90,
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         marginHorizontal: 10,
-
-
-
-
     },
     buttonOpen: {
         backgroundColor: 'black',
@@ -275,8 +222,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)'
-
-
-
-    },
+    }
 });

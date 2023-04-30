@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import MerchantHomePage from './MerchantHomePage';
+
 
 const MerchantForm = () => {
     const [name, setName] = useState('');
@@ -8,6 +11,8 @@ const MerchantForm = () => {
     const [address, setAddress] = useState('');
     const [stripePublishableKey, setStripePublishableKey] = useState('');
     const [stripeSecretKey, setStripeSecretKey] = useState('');
+
+    const navigation = useNavigation()
 
     const handleSubmit = () => {
         const data = {
@@ -24,6 +29,8 @@ const MerchantForm = () => {
         else {
             const mydata = JSON.stringify(data)
             Alert.alert(mydata, "form submitted successfully")
+            navigation.navigate('MerchantHomePage')
+            
         }
     };
 

@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import MerchantPaymentSlip from './MerchantPaymentSlip';
+import BluetoothScreen from './BluetoothScreen';
+import Bttest from './Bttest';
 
 const MerchantHomePage = () => {
     const navigation = useNavigation();
@@ -21,10 +23,12 @@ const MerchantHomePage = () => {
             <TouchableOpacity
                 style={styles.buttonContainer}
                 activeOpacity={0.8}
-                onPress = {handleInitiatePayment}
+                onPress={handleInitiatePayment}
             >
                 <Text style={styles.buttonText}>INITIATE PAYMENT</Text>
             </TouchableOpacity>
+            {/* <BluetoothScreen /> */}
+            {/* <Bttest /> */}
         </LinearGradient>
     );
 }

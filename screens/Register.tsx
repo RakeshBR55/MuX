@@ -3,29 +3,44 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import Login from './Login'
+
 
 const Register = () => {
-    const [fullName, setFullName] = useState('');
+    const [name, setname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [contactDetails, setContactDetails] = useState('');
+    const [contact, setcontact] = useState('');
 
-    const handleRegister = () => {
-        const data = {
-            fullName,
-            email,
-            password,
-            contactDetails,
-        };
-        if (!fullName || !email || !password || !contactDetails) {
-            Alert.alert("Please fill in all the fields")
-        }
-        else {
+    const navigation = useNavigation()
 
-            const mydata = JSON.stringify(data)
-            Alert.alert(mydata)
-        }
-    };
+    const navigate = useNavigation();
+    async function handleRegister(event) {
+      event.preventDefault();
+      const response = await fetch("http://192.168.1.9:1337/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          contact
+        }),
+      });
+  
+      const data = await response.json();
+      console.log(data);
+      if (data.status === "ok") {
+        Alert.alert("User successfully registered");
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("user already exists");
+        navigation.navigate("Login");
+      }
+    }
 
 
 
@@ -40,8 +55,8 @@ const Register = () => {
                 placeholderTextColor='black'
                 placeholder="Full Name"
                 autoCapitalize="none"
-                value={fullName}
-                onChangeText={setFullName}
+                value={name}
+                onChangeText={setname}
             />
             <TextInput
                 style={styles.input}
@@ -66,11 +81,20 @@ const Register = () => {
                 placeholder="Contact Details"
                 keyboardType='numeric'
                 autoCapitalize="none"
-                value={contactDetails}
-                onChangeText={setContactDetails}
+                value={contact}
+                onChangeText={setcontact}
             />
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
                 <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
+            <Text style={{width:200, textAlign:'center', marginBottom:10}}>
+                Already have an account?
+            </Text>
+            <TouchableOpacity style={{width:100, height:40,backgroundColor: '#FFA500',borderRadius:10, alignItems:'center', justifyContent:'center', }} onPress={() => {
+                navigation.navigate('Login')
+
+            }}>
+                <Text style={{textAlign:'center', width:50, color:'#000' }}>Login</Text>
             </TouchableOpacity>
         </LinearGradient>
 

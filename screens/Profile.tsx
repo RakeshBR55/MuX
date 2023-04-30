@@ -3,6 +3,10 @@ import React from 'react'
 import MerchantPaymentSlip from './MerchantPaymentSlip'
 import UserProfile from './UserProfile'
 import MerchantPaymentStatus from './MerchantPaymentStatus'
+import Login from './Login'
+import Register from './Register'
+import MerchantForm from './MerchantForm'
+import PrimaryCard from '../components/PrimaryCard'
 
 
 export default function Profile() {
@@ -12,6 +16,9 @@ export default function Profile() {
       <UserProfile />
       {/* <MerchantPaymentSlip /> */}
       {/* <MerchantPaymentStatus /> */}
+      {/* <Login /> */}
+      {/* <MerchantForm /> */}
+      {/* <PrimaryCard /> */}
     </View>
   )
 }
