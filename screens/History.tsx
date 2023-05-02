@@ -3,9 +3,6 @@ import { View, Text, StyleSheet, FlatList, Image, RefreshControl, TouchableOpaci
 import LinearGradient from 'react-native-linear-gradient';
 
 
-
-
-
 export default function History() {
   const [cards, setCards] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,12 +41,12 @@ export default function History() {
   const renderItem = ({ item }) => (
     <TouchableOpacity key={item.id} onPress={handleTransaction(item.id)}>
       <View style={styles.transaction} >
-        <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
+        <Image source={require('../assets/credit-card.png')} style={styles.avatar} />
         <View style={styles.details}>
           <Text style={styles.name}>{item.id}</Text>
           <Text style={styles.datetime}>
-            `${new Date(item.createdAt).toLocaleDateString()}
-            ${new Date(item.createdAt).toLocaleTimeString()}`
+            {`${new Date(item.createdAt).toLocaleDateString()}
+            ${new Date(item.createdAt).toLocaleTimeString()}`}
           </Text>
         </View>
         <Text style={[styles.amount, styles.positive]}>

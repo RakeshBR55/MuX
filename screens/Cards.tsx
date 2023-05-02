@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React,{useState, useEffect} from 'react'
+import History from './History';
 
 export default function Cards() {
   const [cards, setCards] = useState([]);
@@ -13,7 +14,7 @@ export default function Cards() {
         return response.json();
       })
       .then(data => {
-        
+
         setCards(data);
       })
       .catch(error => {
@@ -32,6 +33,7 @@ export default function Cards() {
           </View>
         ))}
       </View>
+      
     </View>
   )
 }
