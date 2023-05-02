@@ -8,39 +8,41 @@ export default function AddCard() {
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
-    const [cvv, setCvv] = useState('');
+    const [token,setToken] = useState("");
 
-    const handleSubmit = async (event) => {
+    const getToken = async () => {
+        const auth_token = await AsyncStorage.getItem("token");
+        setToken(auth_token)
+    } 
 
-        event.preventDefault();
+    const handleSubmit = async () => {
 
-        const cards = JSON.stringify({
+        getToken()
+        const card = JSON.stringify({
             cardNumber: cardNumber,
             cardHolder: cardName,
             expiryDate: expiryDate,
             
         });
-        const response = await fetch("http://192.168.1.9:1337/api/card/addCard", {
+        const response = await fetch("http://192.168.1.10:1337/api/card/add", {
             method: "POST",
             credentials: "include",
             headers: {
+                'x-auth-token': token,
                 "Content-Type": "application/json",
             },
-            body: cards,
+            body: card,
         });
 
         const data = await response.json();
         console.log(data);
-        if (data.status === "ok") {
-            
-            
+        if (data.status === "success") {
             Alert.alert(" card added successfully");
             setModalVisible(!modalVisible)
-            console.log(cards)
-            setCardName('');
+            console.log(card)
+            setCardName(''); 
             setCardNumber('');
             setExpiryDate('');
-            setCvv('');
 
         } else {
             Alert.alert("please recheck card details");
@@ -96,15 +98,6 @@ export default function AddCard() {
                                     onChangeText={setExpiryDate}
                                 />
                             </View>
-                            <View style={styles.row}>
-                                <Text style={styles.label}>CVV</Text>
-                                <TextInput style={styles.input}
-                                    keyboardType='numeric'
-                                    value={cvv}
-                                    maxLength={3}
-                                    placeholder="123"
-                                    onChangeText={setCvv} />
-                            </View>
 
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                                 <Pressable
@@ -116,10 +109,7 @@ export default function AddCard() {
                                 </Pressable>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {
-
-                                        handleSubmit(event)
-                                    }}>
+                                    onPress={() => {handleSubmit()}}>
                                     <Text style={styles.textStyle}>Submit</Text>
                                 </Pressable>
                             </View>

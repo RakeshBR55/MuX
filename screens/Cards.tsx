@@ -1,70 +1,99 @@
-import { StyleSheet, Text, View,ScrollView,SafeAreaView,ImageBackground, useWindowDimensions,TouchableOpacity} from 'react-native'
-import React,{useState, useEffect} from 'react'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, useWindowDimensions, TouchableOpacity,RefreshControl } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Cards() {
-  const [cards, setCards] = useState([]);
-  const [err,setErr] = useState("");
-  const [token ,setToken] = useState("");
+    const [cards, setCards] = useState([]);
+    const [err, setErr] = useState("");
+    const [token, setToken] = useState("");
+    const [loading, setLoading] = useState(false)
+    const [refreshing, setRefreshing] = useState(false);
 
-  const getToken =async () => {
-    const tok = await AsyncStorage.getItem("token")
-    setToken(tok)
-
-}
-
-  const fetchCards = async () => {
-    try {
-        getToken()
-        const response = await fetch(`http://192.168.1.10:1337/api/card/`,{
-            headers: {
-                'x-auth-token': token,
-                'Content-Type':'application/json'
+    //Fetching the card details
+    const fetchCards = async () => {
+        try {
+            setLoading(true)
+            const response = await fetch(`http://192.168.1.10:1337/api/card/`, {
+                headers: {
+                    'x-auth-token': token,
+                }
             }
+            )
+            const data = await response.json()
+            setCards(data)
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setErr(error)
         }
-    )
-        const data = await response.json()
-        setCards(data) 
-    } catch (error) {
-        console.log(error)
-        setErr(error)
     }
-}
 
-  useEffect(() => {
-    fetchCards()
-  }, []);
+    useEffect(() => {
+        AsyncStorage.getItem("token").then(t => setToken(t)).catch(err => console.log(err)) //Getting the auth token
+        if (token) fetchCards()
+    }, []);
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchCards()
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 1000);
+      };
+    
     const { height, width } = useWindowDimensions();
- 
-  return (
-    <ScrollView>
-        <SafeAreaView style={styles.centeredView}>
-            {cards.length > 0 && cards.map((card,index) => (
-                <View key={index} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
-                    <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                            <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-10 mx-auto">{card.cardNumber}</Text>
-                            <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>{card.cardHolder}</Text>
-                            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='top-10'>{card.expiryDate}</Text>
-                            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{card.cvv}</Text>
-                            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{index}</Text>
 
+    
+
+    return (
+        <ScrollView
+        refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        
+        >
+            <Text className='text-black font-bold text-center my-5 text-3xl'>
+                Your cards
+            </Text>
+            <SafeAreaView style={styles.centeredView} className='pb-24'>
+                {
+                    loading ?
+                        <View>
+                            <Text className='text-black'>Loading.....</Text>
+                        </View> :
+                        <View>
+                            {cards.map((card,index) => (
+                                <View key={index} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
+                                    <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                                        <View className='flex flex-col p-5 space-y-5'>
+                                            <Text className='text-white font-bold text-2xl' >{card.cardNumber.substring(0, 4)} {card.cardNumber.substring(4, 8)} {card.cardNumber.substring(8, 12)} {card.cardNumber.substring(12, 16)}</Text>
+
+                                            <Text className='text-white font-bold text-xl'>Exp: {card.expiryDate.substring(0, 2)}/{
+                                                card.expiryDate.substring(2, 4)
+                                            }</Text>
+                                            <View className='flex flex-row justify-between pt-10'>
+                                                <Text className='text-white text-xl' >{card.cardHolder}</Text>
+                                                <Text >{card.status}</Text>
+                                            </View>
+
+                                        </View>
+                                    </ImageBackground>
+                                </View>
+                            ))}
                         </View>
-                    </ImageBackground>
-                </View>
-            ))}
-
-            {/* <AddCard /> */}
-        </SafeAreaView>
-    </ScrollView>
-)
+                }
+            </SafeAreaView>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
-  centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 })

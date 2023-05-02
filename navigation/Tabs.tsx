@@ -100,6 +100,22 @@ export default function Tabs() {
           </View>
         )
       }} name="History" component={Cards} />
+      <Tab.Screen options={{
+        tabBarIcon: ({ focused }) => (
+          <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+            <Image
+              source={require('../assets/history.png')}
+              resizeMode="contain"
+              style={{
+                width: 35,
+                height: 35,
+                overlayColor: focused ? '#e32f45' : '#748c94'
+              }}
+            />
+            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>History</Text>
+          </View>
+        )
+      }} name="Transactions" component={History} />
     </Tab.Navigator>
   )
 }
