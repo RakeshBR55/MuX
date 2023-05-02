@@ -33,6 +33,11 @@ export default function UserProfile() {
                 }}>
                     <Text style={styles.buttonText}>Register as Merchant</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    navigation.navigate('MerchantHomePage')
+                }}>
+                    <Text style={styles.buttonText}>Merchant home</Text>
+                </TouchableOpacity>
             </View>
         </View >
 

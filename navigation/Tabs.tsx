@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import History from '../screens/History'
 import Home from '../screens/Home'
 import Profile from '../screens/Profile'
+import Cards from '../screens/Cards';
 
 
 
@@ -87,18 +88,18 @@ export default function Tabs() {
         tabBarIcon: ({ focused }) => (
           <View style={{ alignItems: 'center', justifyContent: 'center', }}>
             <Image
-              source={require('../assets/historyLogo.png')}
+              source={require('../assets/cards.png')}
               resizeMode="contain"
               style={{
                 width: 35,
                 height: 35,
-                tintColor: focused ? '#e32f45' : '#748c94'
+                overlayColor: focused ? '#e32f45' : '#748c94'
               }}
             />
-            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>History</Text>
+            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>Cards</Text>
           </View>
         )
-      }} name="History" component={History} />
+      }} name="History" component={Cards} />
     </Tab.Navigator>
   )
 }

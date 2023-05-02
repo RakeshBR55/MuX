@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-nati
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import MerchantHomePage from './MerchantHomePage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const MerchantForm = () => {
@@ -14,24 +15,34 @@ const MerchantForm = () => {
 
     const navigation = useNavigation()
 
-    const handleSubmit = () => {
-        const data = {
-            name,
-            businessName,
-            address,
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const RegDetails = JSON.stringify({
             stripePublishableKey,
             stripeSecretKey,
-        };
-        if (!name || !businessName || !address || !stripePublishableKey || !stripeSecretKey) {
-            Alert.alert("Please fill in all the fields")
+            businessName,
+            address,
+        });
+        
+        const response = await fetch("http://192.168.1.9:1337/api/auth/RegisterMerchant", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: RegDetails
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.status === "ok") {
+            await AsyncStorage.setItem("Merchant", "ok");
 
+            Alert.alert("Merchant regstration successfull");
+            navigation.navigate("MerchantHomePage");
+        } else {
+            Alert.alert("please recheck the details and try again");
         }
-        else {
-            const mydata = JSON.stringify(data)
-            Alert.alert(mydata, "form submitted successfully")
-            navigation.navigate('MerchantHomePage')
-            
-        }
+
     };
 
     return (
