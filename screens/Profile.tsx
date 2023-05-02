@@ -12,7 +12,6 @@ import PrimaryCard from '../components/PrimaryCard'
 export default function Profile() {
   return (
     <View style={{backgroundColor:'green', flex:1, }}>
-      
       <UserProfile />
       {/* <MerchantPaymentSlip /> */}
       {/* <MerchantPaymentStatus /> */}
