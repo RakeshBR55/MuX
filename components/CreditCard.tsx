@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, useWindowDimensions } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, useWindowDimensions, RefreshControl } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import WelcomeScreen from './WelcomeScreen'
 import PrimaryCard from './PrimaryCard'
@@ -9,23 +9,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function CreditCard() {
     const [cards, setCards] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState("")
+    const [token, setToken] = useState("")
 
-    const token = AsyncStorage.getItem("token")
+    const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-        fetch(`http://192.168.1.9:1337/api/auth/card/PrimaryCard/${token}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+    const fetchCards = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`http://192.168.1.10:1337/api/card/`, {
+                headers: {
+                    'x-auth-token': token,
+                    'Content-Type': 'applicatin/json'
                 }
-                return response.json();
-            })
-            .then(data => {
-                setCards(data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            }
+            )
+            let data = await response.json()
+            data = data.filter(card => (
+                card.status == 'PRIMARY'
+            ))
+            setCards(data)
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setErr(error)
+        }
+    }
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchCards()
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 1000);
+      };
+    useEffect(() => {
+        AsyncStorage.getItem("token").then(t => setToken(t)).catch(err => console.log(err))
+        if (token) fetchCards()
     }, []);
 
 
@@ -33,29 +54,49 @@ export default function CreditCard() {
 
 
     return (
-        <ScrollView>
+        <ScrollView
+        refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
             <SafeAreaView style={styles.centeredView}>
                 <WelcomeScreen />
-                {cards.map((card) => (
-                    <View key={card.id} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
-                        <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', padding: 20 }}>
-                                <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }} className="top-10 mx-auto">{card.cardNumber}</Text>
-                                <Text style={{ color: 'white', fontSize: 15, }} className='top-10 '>{card.cardName}</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='top-10'>{card.expiryDate}</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{card.cvv}</Text>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} className='left-60'>{index}</Text>
+                
+                {
+                    loading ? <View>
+                        <Text>
+                            Loading ...
+                        </Text>
+                    </View> : (
+                        cards.length > 0 && cards.map((card, index) => (
+                            <View key={index} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
+                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                                <View className='flex flex-col p-5 space-y-5'>
+                                    <Text className='text-white font-bold text-2xl' >{card.cardNumber.substring(0, 4)} {card.cardNumber.substring(4, 8)} {card.cardNumber.substring(8, 12)} {card.cardNumber.substring(12, 16)}</Text>
 
-                            </View>
-                        </ImageBackground>
-                    </View>
-                ))}
+                                    <Text className='text-white font-bold text-xl'>Exp: {card.expiryDate.substring(0, 2)}/{
+                                        card.expiryDate.substring(2, 4)
+                                    }</Text>
+                                    <View className='flex flex-row justify-between pt-10'>
+                                        <Text className='text-white text-xl' >{card.cardHolder}</Text>
+                                        <Text >{card.status}</Text>
+                                    </View>
 
+                                </View>
+                            </ImageBackground>
+                        </View>
+                        ))
+                    )
+                }
                 <AddCard />
             </SafeAreaView>
         </ScrollView>
     )
 }
+
 
 const styles = StyleSheet.create({
     centeredView: {

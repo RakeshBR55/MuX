@@ -18,7 +18,7 @@ const Register = () => {
     const navigate = useNavigation();
     async function handleRegister(event) {
       event.preventDefault();
-      const response = await fetch("http://192.168.1.9:1337/api/auth/register", {
+      const response = await fetch("http://192.168.1.6:1337/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

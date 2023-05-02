@@ -1,81 +1,99 @@
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, lazy } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, RefreshControl, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 
 
 export default function History() {
-  const [cards, setCards] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [err, setErr] = useState("");
+  const [token, setToken] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const fetchCards = () => {
-    fetch('http://192.168.1.9:1337/api/auth/card/')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('http://192.168.1.10:1337/api/transaction/user', {
+        headers: {
+          'x-auth-token': token
         }
-        return response.json();
       })
-      .then(data => {
-        setCards(data);
-        setRefreshing(false);
-      })
-      .catch(error => {
-        console.log(error);
-        setRefreshing(false);
-      });
-  };
+      const data = await response.json()
+      setPayments(data)
+      console.log(data)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setErr(error)
+    }
+  }
 
   useEffect(() => {
-    fetchCards();
+    AsyncStorage.getItem("token").then(t => setToken(t)).catch(err => console.log(err))
+    if (token != "") fetchTransactions()
   }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchCards();
+    fetchTransactions()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
   };
 
-  const handleTransaction = (id) => () => {
-    
+
+  const handleTransaction = async () => {
+    return
   }
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity key={item.id} onPress={handleTransaction(item.id)}>
-      <View style={styles.transaction} >
-        <Image source={require('../assets/credit-card.png')} style={styles.avatar} />
-        <View style={styles.details}>
-          <Text style={styles.name}>{item.id}</Text>
-          <Text style={styles.datetime}>
-            {`${new Date(item.createdAt).toLocaleDateString()}
-            ${new Date(item.createdAt).toLocaleTimeString()}`}
-          </Text>
-        </View>
-        <Text style={[styles.amount, styles.positive]}>
-          PAY
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-
   return (
     <LinearGradient colors={['#0cb4ee', '#03030a', '#0707b8']} style={{ backgroundColor: '#383838', flex: 1, }}>
-
       <Text className='text-3xl font-bold p-10 bg-black ' style={{ backgroundColor: '#383838', textAlign: 'center', }}>
         Pending payments
       </Text>
-
-      <FlatList
-        data={cards}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+      <ScrollView
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }>
+        {
+          loading ? <View>
+            <Text>
+              Loading ....
+            </Text>
+          </View> :
+            (
+              payments.map((item, index) => (
+                <TouchableOpacity key={index} onPress={handleTransaction(item.id)}>
+                  <View style={styles.transaction} >
+                    <Image source={require('../assets/credit-card.png')} style={styles.avatar} />
+                    <View style={styles.details}>
+                      <Text style={styles.name}>{item['merchantId']['businessName']}</Text>
+                      <View style={styles.datetime} className='flex flex-row space-x-5'>
+                        <Text>
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </Text>
+                        <Text>
+                          {new Date(item.createdAt).toLocaleTimeString()}
+                        </Text>
+
+                      </View>
+                    </View>
+                    <Text style={[styles.amount, styles.positive]}>
+                      {
+                        item['status'] == 'PENDING' ? "Pay" : 'Successful'
+                      }
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )
         }
-        contentContainerStyle={styles.container} />
-
-
-
-
+      </ScrollView>
     </LinearGradient>
 
   );

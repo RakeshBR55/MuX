@@ -11,14 +11,12 @@ export default function Home() {
 
   return (
 
-
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#0cb4ee', '#03030a','#0707b8' ]}
          style={styles.gradient}>
-        {/* <AddCard /> */}
-        {/* <Test /> */}
+      
         <CreditCard />
-        {/* <CreditCardInputModal /> */}
+  
 
       </LinearGradient>
     </SafeAreaView>

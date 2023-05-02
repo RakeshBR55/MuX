@@ -104,7 +104,7 @@ export default function Tabs() {
         tabBarIcon: ({ focused }) => (
           <View style={{ alignItems: 'center', justifyContent: 'center', }}>
             <Image
-              source={require('../assets/cards.png')}
+              source={require('../assets/history.png')}
               resizeMode="contain"
               style={{
                 width: 35,
@@ -112,10 +112,10 @@ export default function Tabs() {
                 overlayColor: focused ? '#e32f45' : '#748c94'
               }}
             />
-            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>Payments</Text>
+            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>History</Text>
           </View>
         )
-      }} name="Payments" component={History} />
+      }} name="Transactions" component={History} />
     </Tab.Navigator>
   )
 }
