@@ -21,10 +21,11 @@ export default function App() {
   const { height, width, scale, fontScale } = useWindowDimensions();
   const [hasToken, setHasToken] = useState(false);
 
+  const baseUrl = process.env.BASE_URL
+    console.log(baseUrl) 
   useEffect(() => {
     const getToken = async () => {
       const token = await AsyncStorage.getItem('token');
-      console.log(token)
       setHasToken(!!token)
       console.log(hasToken)
     };

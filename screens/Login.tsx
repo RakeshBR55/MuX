@@ -12,11 +12,11 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const { setDecodedToken } = useContext(authContext);
     const navigation = useNavigation();
-
-
+    const baseUrl = process.env.BASE_URL;
+    console.log(baseUrl)
     async function handleLogin(event) {
         event.preventDefault();
-        const response = await fetch("http://192.168.1.9:1337/api/auth/login", {
+        const response = await fetch(`http://192.168.1.10:1337/api/auth/login`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -30,8 +30,8 @@ const Login = () => {
 
         const data = await response.json();
         console.log(data);
-        if (data.status === "ok") {
-            await AsyncStorage.setItem("token", data.token);
+        if (data.status === "success") {
+            await AsyncStorage.setItem("token", data.auth_token);
             setDecodedToken(data.token);
 
             Alert.alert("Login successfull");
