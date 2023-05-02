@@ -25,7 +25,7 @@ export default function Tabs() {
       activeColor="#e32f45"
       inactiveColor="#3e2465"
       barStyle={{
-        backgroundColor: '#ffffff',
+        backgroundColor: 'black',
         overflow: 'hidden',
         height: 80,
         borderRadius: 20,
@@ -54,7 +54,7 @@ export default function Tabs() {
                 width: 35,
                 height: 35,
                 top: 5,
-                tintColor: focused ? '#e32f45' : '#748c94'
+                overlayColor: focused ? '#e32f45' : '#748c94'
               }}
             />
             <Text className="font-bold" style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12, width: 40, left: 4, top: 3 }}>Profile</Text>
@@ -75,7 +75,7 @@ export default function Tabs() {
                 width: 35,
                 height: 35,
 
-                tintColor: focused ? '#e32f45' : '#748c94'
+                overlayColor: focused ? '#e32f45' : '#748c94'
 
               }}
             />

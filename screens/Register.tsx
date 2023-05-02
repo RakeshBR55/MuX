@@ -18,7 +18,7 @@ const Register = () => {
     const navigate = useNavigation();
     async function handleRegister(event) {
       event.preventDefault();
-      const response = await fetch("http://192.168.1.6:1337/api/auth/register", {
+      const response = await fetch("http://192.168.1.10:1337/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +33,7 @@ const Register = () => {
   
       const data = await response.json();
       console.log(data);
-      if (data.status === "ok") {
+      if (data.status === "success") {
         Alert.alert("User successfully registered");
         navigation.navigate("Login");
       } else {

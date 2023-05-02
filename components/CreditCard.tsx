@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, useW
 import React, { useState, useEffect } from 'react'
 import WelcomeScreen from './WelcomeScreen'
 import PrimaryCard from './PrimaryCard'
-// import useFetch from "./useFetch";
+
 import AddCard from './AddCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -41,9 +41,9 @@ export default function CreditCard() {
         setRefreshing(true);
         fetchCards()
         setTimeout(() => {
-          setRefreshing(false);
+            setRefreshing(false);
         }, 1000);
-      };
+    };
     useEffect(() => {
         AsyncStorage.getItem("token").then(t => setToken(t)).catch(err => console.log(err))
         if (token) fetchCards()
@@ -55,16 +55,16 @@ export default function CreditCard() {
 
     return (
         <ScrollView
-        refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }
         >
             <SafeAreaView style={styles.centeredView}>
                 <WelcomeScreen />
-                
+
                 {
                     loading ? <View>
                         <Text>
@@ -73,21 +73,21 @@ export default function CreditCard() {
                     </View> : (
                         cards.length > 0 && cards.map((card, index) => (
                             <View key={index} style={{ backgroundColor: 'black', width: width * 0.95, borderRadius: 15, height: height * 0.27, overflow: 'hidden', }} className="mx-auto m-4">
-                            <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
-                                <View className='flex flex-col p-5 space-y-5'>
-                                    <Text className='text-white font-bold text-2xl' >{card.cardNumber.substring(0, 4)} {card.cardNumber.substring(4, 8)} {card.cardNumber.substring(8, 12)} {card.cardNumber.substring(12, 16)}</Text>
+                                <ImageBackground source={require('../assets/credit-card.png')} style={{ width: '100%', height: '100%' }}>
+                                    <View className='flex flex-col p-5 space-y-5'>
+                                        <Text className='text-white font-bold text-2xl' >{card.cardNumber.substring(0, 4)} {card.cardNumber.substring(4, 8)} {card.cardNumber.substring(8, 12)} {card.cardNumber.substring(12, 16)}</Text>
 
-                                    <Text className='text-white font-bold text-xl'>Exp: {card.expiryDate.substring(0, 2)}/{
-                                        card.expiryDate.substring(2, 4)
-                                    }</Text>
-                                    <View className='flex flex-row justify-between pt-10'>
-                                        <Text className='text-white text-xl' >{card.cardHolder}</Text>
-                                        <Text >{card.status}</Text>
+                                        <Text className='text-white font-bold text-xl'>Exp: {card.expiryDate.substring(0, 2)}/{
+                                            card.expiryDate.substring(2, 4)
+                                        }</Text>
+                                        <View className='flex flex-row justify-between pt-10'>
+                                            <Text className='text-white text-2xl,' style={{width:150, fontSize:25}} >{card.cardHolder}</Text>
+                                            <Text style={{width:100}} >{card.status}</Text>
+                                        </View>
+
                                     </View>
-
-                                </View>
-                            </ImageBackground>
-                        </View>
+                                </ImageBackground>
+                            </View>
                         ))
                     )
                 }
