@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, lazy } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, RefreshControl, TouchableOpacity, Button, Modal, TextInput, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, RefreshControl, TouchableOpacity, Button, Modal, TextInput, Pressable, Linking } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -17,9 +17,13 @@ export default function History() {
 
   const [cvv, setCvv] = useState("");
   const [amount, setAmount] = useState("");
-  
+
   const [paymentId, setPaymentId] = useState("");
   const navigation = useNavigation()
+
+  function openLink(url: string) {
+    Linking.openURL(url);
+  }
 
   const fetchTransactions = async () => {
     try {
@@ -54,18 +58,24 @@ export default function History() {
 
   const handlePayment = async () => {
     try {
+
+      const payload = {
+        cvv, amount, transactionId : paymentId
+      }
       const response = await fetch('http://192.168.1.10:1337/api/payment/intent', {
         headers: {
-          'x-auth-token': token
-        }
+          'x-auth-token': token,
+          'Content-Type': 'application/json'
+        },
+        'method': 'POST',
+        body: JSON.stringify(payload)
       })
       const data = await response.json()
       console.log(data)
-      if(data.status == "ok") {
-        navigation.navigate("MerchantPaymentStatus")
+      if (data.status == 'success') {
+        openLink(data.redirect_url['url'])
+        setModalVisible(false)
       }
-      
-
 
     }
     catch (error) {
@@ -76,11 +86,11 @@ export default function History() {
 
   const handleTransaction = (id) => {
     setModalVisible(true)
-     setPaymentId(id)
-     console.log(paymentId)
+    setPaymentId(id)
+    console.log(paymentId)
   }
   return (
-    
+
     <LinearGradient colors={['#0cb4ee', '#03030a', '#0707b8']} style={{ backgroundColor: '#383838', flex: 1, }}>
       <Text className='text-3xl font-bold p-10 ' style={{ textAlign: 'center', }}>
         Pending payments
@@ -92,60 +102,59 @@ export default function History() {
             onRefresh={onRefresh}
           />
         }>
-          <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
 
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <View style={styles.container}>
-                        <View style={styles.card}>
-                            <View style={styles.row}>
-                                <Text style={styles.label}>Amount</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={amount}
-                                    keyboardType="numeric"
-                                    placeholder='₹'
-                                    placeholderTextColor={'gray'}
-                                    onChangeText={setAmount}
-                                />
-                               
-                                
-                            </View>
-                            <View style={styles.row}>
-                                <Text style={styles.label}>CVV</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={cvv}
-                                    keyboardType='numeric'
-                                    onChangeText={setCvv}
-                                    maxLength={3}
-                                    placeholderTextColor={'gray'}
-                                    placeholder="234"
-                                />
-                            </View>
-                            
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.container}>
+            <View style={styles.card}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Amount</Text>
+                <TextInput
+                  style={styles.input}
+                  value={amount}
+                  keyboardType="numeric"
+                  placeholder='₹'
+                  placeholderTextColor={'gray'}
+                  onChangeText={setAmount}
+                />
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                                <Pressable
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {
-                                        setModalVisible(!modalVisible);
-                                    }}>
-                                    <Text style={styles.textStyle}>Close</Text>
-                                </Pressable>
-                                <Pressable
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {handlePayment()}}>
-                                    <Text style={styles.textStyle}>PAY</Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
+
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>CVV</Text>
+                <TextInput
+                  style={styles.input}
+                  value={cvv}
+                  keyboardType='numeric'
+                  onChangeText={setCvv}
+                  maxLength={3}
+                  placeholderTextColor={'gray'}
+                  placeholder="234"
+                />
+              </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}>
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => { handlePayment() }}>
+                  <Text style={styles.textStyle}>PAY</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
         {
           loading ? <View>
             <Text>
@@ -169,11 +178,15 @@ export default function History() {
 
                     </View>
                   </View>
-                  <View style={{right:10, width:40}}>
-                  <Button title='pay' onPress={() => handleTransaction(item._id)}></Button>
-                  </View>
-
-                  
+                  {
+                    item.status == 'PENDING' ? <View className='right-4'>
+                    <Pressable onPress={() => handleTransaction(item._id)}>
+                      <Text className='bg-blue-900 px-6 text-lg py-1 rounded-md '>
+                        Pay
+                      </Text>
+                    </Pressable>
+                  </View>: <Text className='px-5'>₹ {item.billAmount}</Text>
+                  }
                 </View>
 
               ))
@@ -181,7 +194,7 @@ export default function History() {
         }
       </ScrollView>
     </LinearGradient>
-    
+
 
   );
 }
@@ -236,8 +249,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-},
-modalView: {
+  },
+  modalView: {
     flex: 1,
     margin: 20,
     backgroundColor: 'white',
@@ -246,63 +259,63 @@ modalView: {
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: 2,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-},
-button: {
+  },
+  button: {
     width: 90,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginHorizontal: 10,
-},
-buttonOpen: {
+  },
+  buttonOpen: {
     backgroundColor: 'black',
-},
-buttonClose: {
+  },
+  buttonClose: {
     backgroundColor: '#2196F3',
-},
-textStyle: {
+  },
+  textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-},
-modalText: {
+  },
+  modalText: {
     marginBottom: 15,
     textAlign: 'center',
-},
-card: {
+  },
+  card: {
     width: '90%',
     backgroundColor: '#FFF',
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: 2,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-},
-row: {
+  },
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 15,
-},
-label: {
+  },
+  label: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#555',
     marginRight: 10,
-},
-input: {
+  },
+  input: {
     flex: 1,
     height: 40,
     borderColor: '#AAA',
@@ -312,11 +325,11 @@ input: {
     paddingRight: 10,
     fontSize: 16,
     color: '#333',
-},
-container: {
+  },
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
-}
+  }
 });
