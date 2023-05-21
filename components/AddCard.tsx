@@ -2,18 +2,19 @@ import { StyleSheet, Alert, TextInput, Image, Pressable, Text, View, useWindowDi
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from '../envs'
 
 export default function AddCard() {
     const [modalVisible, setModalVisible] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
-    const [token,setToken] = useState("");
+    const [token, setToken] = useState("");
 
     const getToken = async () => {
         const auth_token = await AsyncStorage.getItem("token");
         setToken(auth_token)
-    } 
+    }
 
     const handleSubmit = async () => {
 
@@ -22,9 +23,9 @@ export default function AddCard() {
             cardNumber: cardNumber,
             cardHolder: cardName,
             expiryDate: expiryDate,
-            
+
         });
-        const response = await fetch("http://192.168.1.10:1337/api/card/add", {
+        const response = await fetch(`${BASE_URL}card/add`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -40,7 +41,7 @@ export default function AddCard() {
             Alert.alert(" card added successfully");
             setModalVisible(!modalVisible)
             console.log(card)
-            setCardName(''); 
+            setCardName('');
             setCardNumber('');
             setExpiryDate('');
 
@@ -109,7 +110,7 @@ export default function AddCard() {
                                 </Pressable>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {handleSubmit()}}>
+                                    onPress={() => { handleSubmit() }}>
                                     <Text style={styles.textStyle}>Submit</Text>
                                 </Pressable>
                             </View>

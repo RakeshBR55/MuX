@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import MerchantHomePage from './MerchantHomePage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {BASE_URL} from '../envs'
 
 const MerchantForm = () => {
     const [name, setName] = useState('');
@@ -12,6 +12,7 @@ const MerchantForm = () => {
     const [address, setAddress] = useState('');
     const [stripePublishableKey, setStripePublishableKey] = useState('');
     const [stripeSecretKey, setStripeSecretKey] = useState('');
+    
 
     const navigation = useNavigation()
 
@@ -24,7 +25,7 @@ const MerchantForm = () => {
             address,
         });
         
-        const response = await fetch("http://192.168.1.9:1337/api/auth/RegisterMerchant", {
+        const response = await fetch(`${BASE_URL}auth/RegisterMerchant`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -32,6 +33,7 @@ const MerchantForm = () => {
             },
             body: RegDetails
         });
+        
         const data = await response.json();
         console.log(data);
         if (data.status === "ok") {

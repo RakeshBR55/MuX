@@ -41,6 +41,7 @@ export default function App() {
 
               <Stack.Screen name="Tabs" component={Tabs} />
               <Stack.Screen name="MerchantForm" component={MerchantForm} />
+              {/* <Stack.Screen name="Login" component={Login} /> */}
 
               <Stack.Screen name="MerchantHomePage" component={MerchantHomePage} />
               <Stack.Screen name="MerchantPaymentSlip" component={MerchantPaymentSlip} />

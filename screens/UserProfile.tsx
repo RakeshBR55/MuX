@@ -1,9 +1,11 @@
 import React, { Component, lazy, useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity ,RefreshControl ,ScrollView} from 'react-native';
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MerchantForm from './MerchantForm';
 import MerchantHomePage from "./MerchantHomePage"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Login from "./Login"
+import { BASE_URL } from '../envs'
 
 
 export default function UserProfile() {
@@ -14,12 +16,12 @@ export default function UserProfile() {
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
-    
+
     // Fetching the user 
     const fetchUser = async () => {
         try {
             setLoading(true)
-            const response = await fetch('http://192.168.1.10:1337/api/auth/user', {
+            const response = await fetch(`${BASE_URL}auth/user`, {
                 headers: {
                     'x-auth-token': token
                 }
@@ -37,14 +39,18 @@ export default function UserProfile() {
         if (token) fetchUser()
     }, [])
 
+    const handleLogout = () => {
+        AsyncStorage.removeItem("token")
+        navigation.navigate("Login")
+    }
 
     const onRefresh = () => {
         setRefreshing(true);
         fetchUser()
         setTimeout(() => {
-          setRefreshing(false);
+            setRefreshing(false);
         }, 1000);
-      };
+    };
     return (
         loading ? <View>
             <Text>
@@ -54,10 +60,10 @@ export default function UserProfile() {
             (<ScrollView style={styles.container}
                 refreshControl={
                     <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
                     />
-                  }
+                }
             >
                 <Text style={{
                     fontSize: 24,
@@ -78,6 +84,9 @@ export default function UserProfile() {
                     <Text style={styles.phone}>+91 {data.contact}</Text>
                 </View>
                 <View style={styles.footer}>
+                    <TouchableOpacity style={styles.button} onPress={() => {handleLogout}}>
+                        <Text style={styles.buttonText}>Logout</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={() => {
                         navigation.navigate('MerchantForm')
                     }}>
@@ -164,6 +173,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 5,
+        margin:5
     },
     buttonText: {
         color: '#fff',

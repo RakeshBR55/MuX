@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, SafeAreaView, ImageBackground, useW
 import React, { useState, useEffect } from 'react'
 import WelcomeScreen from './WelcomeScreen'
 import PrimaryCard from './PrimaryCard'
-
+import { BASE_URL } from '../envs'
 import AddCard from './AddCard'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -18,7 +18,11 @@ export default function CreditCard() {
     const fetchCards = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.1.10:1337/api/card/`, {
+
+            const isToken = await AsyncStorage.getItem("token")
+            setToken(isToken)
+            console.log(token)
+            const response = await fetch(`${BASE_URL}card/`, {
                 headers: {
                     'x-auth-token': token,
                     'Content-Type': 'applicatin/json'
@@ -81,8 +85,8 @@ export default function CreditCard() {
                                             card.expiryDate.substring(2, 4)
                                         }</Text>
                                         <View className='flex flex-row justify-between pt-10'>
-                                            <Text className='text-white text-2xl,' style={{width:150, fontSize:25}} >{card.cardHolder}</Text>
-                                            <Text style={{width:100}} >{card.status}</Text>
+                                            <Text className='text-white text-2xl,' style={{ width: 150, fontSize: 25 }} >{card.cardHolder}</Text>
+                                            <Text style={{ width: 100 }} >{card.status}</Text>
                                         </View>
 
                                     </View>

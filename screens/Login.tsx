@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authContext } from "../components/authContext";
 import Register from './Register'
 import Tabs from '../navigation/Tabs'
+import {BASE_URL} from '../envs'
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ const Login = () => {
     console.log(baseUrl)
     async function handleLogin(event) {
         event.preventDefault();
-        const response = await fetch(`http://192.168.1.10:1337/api/auth/login`, {
+        const response = await fetch(`${BASE_URL}auth/login`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -33,6 +34,7 @@ const Login = () => {
         if (data.status === "success") {
             await AsyncStorage.setItem("token", data.auth_token);
             setDecodedToken(data.token);
+            console.log()
 
             Alert.alert("Login successfull");
             navigation.navigate("Tabs");

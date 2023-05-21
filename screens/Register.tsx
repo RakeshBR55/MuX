@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'reac
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Login from './Login'
+import { BASE_URL } from '../envs'
 
 
 const Register = () => {
@@ -17,29 +18,37 @@ const Register = () => {
 
     const navigate = useNavigation();
     async function handleRegister(event) {
-      event.preventDefault();
-      const response = await fetch("http://192.168.1.10:1337/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          contact
-        }),
-      });
-  
-      const data = await response.json();
-      console.log(data);
-      if (data.status === "success") {
-        Alert.alert("User successfully registered");
-        navigation.navigate("Login");
-      } else {
-        Alert.alert("user already exists");
-        navigation.navigate("Login");
-      }
+        event.preventDefault();
+        try {
+            const response = await fetch(`${BASE_URL}/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    contact
+                }),
+            });
+
+
+            const data = await response.json();
+            console.log(data);
+            if (data.status === "success") {
+                Alert.alert("User successfully registered");
+                navigation.navigate("Login");
+            } else {
+                Alert.alert("user already exists");
+                navigation.navigate("Login");
+            }
+        } catch (error) {
+            console.log(error)
+        }
+
+
+
     }
 
 
@@ -87,14 +96,14 @@ const Register = () => {
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
                 <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
-            <Text style={{width:200, textAlign:'center', marginBottom:10}}>
+            <Text style={{ width: 200, textAlign: 'center', marginBottom: 10 }}>
                 Already have an account?
             </Text>
-            <TouchableOpacity style={{width:100, height:40,backgroundColor: '#FFA500',borderRadius:10, alignItems:'center', justifyContent:'center', }} onPress={() => {
+            <TouchableOpacity style={{ width: 100, height: 40, backgroundColor: '#FFA500', borderRadius: 10, alignItems: 'center', justifyContent: 'center', }} onPress={() => {
                 navigation.navigate('Login')
 
             }}>
-                <Text style={{textAlign:'center', width:50, color:'#000' }}>Login</Text>
+                <Text style={{ textAlign: 'center', width: 50, color: '#000' }}>Login</Text>
             </TouchableOpacity>
         </LinearGradient>
 

@@ -6,6 +6,7 @@ export const authContext = createContext();
 
 export const AuthState = ({children}) => {
   const token = AsyncStorage.getItem('token') || null;
+  console.log(token)
   let isMyTokenExpired = isExpired(token);
   const [decodedToken, setDecodedToken] = useState(decodeToken(token));
   return (

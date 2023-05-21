@@ -18,6 +18,7 @@ const MerchantHomePage = () => {
                 <Text style={styles.title}>Merchant Home Page</Text>
                 <Text style={styles.subtitle}>Start Here To Make Payment</Text>
             </View>
+            
 
             <TouchableOpacity
                 style={styles.buttonContainer}

@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import MerchantPaymentStatus from './MerchantPaymentStatus'
-
+import {BASE_URL} from '../envs'
 
 export default function History() {
   const [payments, setPayments] = useState([]);
@@ -28,7 +28,7 @@ export default function History() {
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://192.168.1.10:1337/api/transaction/user', {
+      const response = await fetch(`${BASE_URL}transaction/user`, {
         headers: {
           'x-auth-token': token
         }
@@ -62,7 +62,7 @@ export default function History() {
       const payload = {
         cvv, amount, transactionId : paymentId
       }
-      const response = await fetch('http://192.168.1.10:1337/api/payment/intent', {
+      const response = await fetch(`${BASE_URL}payment/intent`, {
         headers: {
           'x-auth-token': token,
           'Content-Type': 'application/json'
